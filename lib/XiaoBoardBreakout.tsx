@@ -1,5 +1,96 @@
 import type { ChipProps } from "@tscircuit/props"
 
+// Create a simple Xiao-style footprint for the RP2040-Zero
+const XiaoRP2040Footprint = () => {
+  const pads = []
+  let pinNumber = 1
+
+  // Top pads (SWDIO, SWCLK, RUN, GND1, GND2, VIN)
+  const topPads = [
+    { x: -1.396, y: 8.442 },  // pin1: SWDIO
+    { x: 1.144, y: 8.442 },   // pin2: SWCLK
+    { x: -1.396, y: 5.902 },  // pin3: RUN
+    { x: 1.144, y: 5.902 },   // pin4: GND1
+  ]
+
+  for (const pad of topPads) {
+    pads.push(
+      <smtpad
+        key={`top-${pinNumber}`}
+        portHints={[`pin${pinNumber++}`]}
+        radius={0.5715}
+        pcbX={pad.x}
+        pcbY={pad.y}
+        layer="top"
+        shape="circle"
+      />
+    )
+  }
+
+  // Bottom pads (GND2, VIN)
+  const bottomPads = [
+    { x: 1.27, y: -8.5 },   // pin5: GND2
+    { x: -1.27, y: -8.5 },  // pin6: VIN
+  ]
+
+  for (const pad of bottomPads) {
+    pads.push(
+      <smtpad
+        key={`bottom-${pinNumber}`}
+        portHints={[`pin${pinNumber++}`]}
+        width={1.016}
+        height={2.032}
+        pcbX={pad.x}
+        pcbY={pad.y}
+        layer="top"
+        shape="rect"
+      />
+    )
+  }
+
+  // Left side pads (A0-A3, SDA, SCL, TX)
+  const leftRowX = -8.25
+  const leftPins = 7
+  const pitch = 2.54
+  const yOffset = ((leftPins - 1) / 2) * pitch
+
+  for (let i = 0; i < leftPins; i++) {
+    pads.push(
+      <smtpad
+        key={`left-${pinNumber}`}
+        portHints={[`pin${pinNumber++}`]}
+        width={3}
+        height={2}
+        pcbX={leftRowX}
+        pcbY={yOffset - i * pitch}
+        layer="top"
+        shape="rect"
+      />
+    )
+  }
+
+  // Right side pads (VBUS, GND3, V3_3, MOSI, MISO, SCK, RX)
+  const rightRowX = 8.25
+  const rightPins = 7
+
+  for (let i = 0; i < rightPins; i++) {
+    pads.push(
+      <smtpad
+        key={`right-${pinNumber}`}
+        portHints={[`pin${pinNumber++}`]}
+        width={3}
+        height={2}
+        pcbX={rightRowX}
+        pcbY={yOffset - i * pitch}
+        layer="top"
+        shape="rect"
+      />
+    )
+  }
+
+  return <footprint>{pads}</footprint>
+}
+
 // XiaoBoard RP2040 pin labels from @tscircuit/common
 const RP2040PinLabels = {
   pin1: "SWDIO",
@@ -49,7 +140,7 @@ const rp2040PinArrangement = {
 export const XiaoBoardBreakout = () => (
   <chip
     name="P1"
-    footprint="xiao"
+    footprint={<XiaoRP2040Footprint />}
     pinLabels={RP2040PinLabels}
     schWidth={1.5}
     schPinArrangement={rp2040PinArrangement}
