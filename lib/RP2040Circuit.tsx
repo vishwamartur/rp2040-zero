@@ -20,11 +20,52 @@ export const RP2040Circuit = () => (
         USB_DP: "net.USB_P",
 
         GND: "net.GND",
+
+        // GPIO connections
+        GPIO0: "net.GPIO0",
+        GPIO1: "net.GPIO1",
+        GPIO2: "net.GPIO2",
+        GPIO3: "net.GPIO3",
+        GPIO4: "net.GPIO4",
+        GPIO5: "net.GPIO5",
+        GPIO6: "net.GPIO6",
+        GPIO7: "net.GPIO7",
+        GPIO8: "net.GPIO8",
+        GPIO9: "net.GPIO9",
+        GPIO10: "net.GPIO10",
+        GPIO11: "net.GPIO11",
+        GPIO12: "net.GPIO12",
+        GPIO13: "net.GPIO13",
+        GPIO14: "net.GPIO14",
+        GPIO15: "net.GPIO15",
+        GPIO16: "net.GPIO16",
+        GPIO26_ADC0: "net.GPIO26",
+        GPIO27_ADC1: "net.GPIO27",
+        GPIO28_ADC2: "net.GPIO28",
+        GPIO29_ADC3: "net.GPIO29",
+
+        // Crystal connections
+        XIN: "net.XIN",
+        XOUT: "net.XOUT",
+
+        // Flash connections
+        QSPI_SS_N: "net.QSPI_SS_N",
+        QSPI_SD0: "net.QSPI_SD0",
+        QSPI_SD1: "net.QSPI_SD1",
+        QSPI_SD2: "net.QSPI_SD2",
+        QSPI_SD3: "net.QSPI_SD3",
+        QSPI_SCLK: "net.QSPI_CLK",
+
+        // Other connections
+        RUN: "net.RUN",
+        VREG_VIN: "net.V3_3",
+        VREG_VOUT: "net.V1_1",
       }}
     />
     {/* Decoupling Capacitors for IOVDD */}
     {["C12", "C14", "C8", "C13", "C15", "C19"].map((cName) => (
       <capacitor
+        key={cName}
         name={cName}
         capacitance="100nF"
         schOrientation="vertical"
