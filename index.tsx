@@ -6,7 +6,12 @@ import { CrystalCircuit } from "./lib/CrystalCircuit"
 import { RP2040Circuit } from "./lib/RP2040Circuit"
 
 export default () => (
-  <board routingDisabled schMaxTraceDistance={5}>
+  <board
+    width="21mm"
+    height="17.5mm"
+    schMaxTraceDistance={5}
+    routingDisabled
+  >
     <VoltageRegulator />
     <XiaoBoardBreakout />
     <LedCircuit />

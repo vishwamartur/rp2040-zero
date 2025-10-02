@@ -1,16 +1,37 @@
 import type { ChipProps } from "@tscircuit/props"
 
-// Create a simple Xiao-style footprint for the RP2040-Zero
+// Create a Xiao-style footprint for the RP2040-Zero
+// Board dimensions: 21mm (length) x 17.5mm (width)
+// Based on Waveshare RP2040-Zero and Xiao form factor
 const XiaoRP2040Footprint = () => {
   const pads = []
   let pinNumber = 1
 
-  // Top pads (SWDIO, SWCLK, RUN, GND1, GND2, VIN)
+  // Board dimensions (in mm)
+  const boardLength = 21  // X-axis
+  const boardWidth = 17.5 // Y-axis
+
+  // Pin configuration
+  const pitch = 2.54  // Standard 0.1" pitch
+  const leftPins = 7
+  const rightPins = 7
+
+  // Calculate pad positions
+  // Left/right pads are positioned at ±7.62mm from center (15.24mm apart)
+  // This leaves ~1.13mm clearance on each side of the 17.5mm board
+  const leftRowX = -7.62
+  const rightRowX = 7.62
+
+  // Vertical centering: 7 pins with 2.54mm pitch = 15.24mm total span
+  const yOffset = ((leftPins - 1) / 2) * pitch  // = 7.62mm
+
+  // Top castellated pads (SWDIO, SWCLK, RUN, GND1)
+  // Positioned near the top edge at Y = 8.5mm
   const topPads = [
-    { x: -1.396, y: 8.442 },  // pin1: SWDIO
-    { x: 1.144, y: 8.442 },   // pin2: SWCLK
-    { x: -1.396, y: 5.902 },  // pin3: RUN
-    { x: 1.144, y: 5.902 },   // pin4: GND1
+    { x: -1.396, y: 8.5 },  // pin1: SWDIO
+    { x: 1.144, y: 8.5 },   // pin2: SWCLK
+    { x: -1.396, y: 6.0 },  // pin3: RUN
+    { x: 1.144, y: 6.0 },   // pin4: GND1
   ]
 
   for (const pad of topPads) {
@@ -27,7 +48,8 @@ const XiaoRP2040Footprint = () => {
     )
   }
 
-  // Bottom pads (GND2, VIN)
+  // Bottom castellated pads (GND2, VIN)
+  // Positioned near the bottom edge at Y = -8.5mm
   const bottomPads = [
     { x: 1.27, y: -8.5 },   // pin5: GND2
     { x: -1.27, y: -8.5 },  // pin6: VIN
@@ -49,18 +71,14 @@ const XiaoRP2040Footprint = () => {
   }
 
   // Left side pads (A0-A3, SDA, SCL, TX)
-  const leftRowX = -8.25
-  const leftPins = 7
-  const pitch = 2.54
-  const yOffset = ((leftPins - 1) / 2) * pitch
-
+  // 7 pins centered vertically
   for (let i = 0; i < leftPins; i++) {
     pads.push(
       <smtpad
         key={`left-${pinNumber}`}
         portHints={[`pin${pinNumber++}`]}
-        width={3}
-        height={2}
+        width={1.6}
+        height={1.6}
         pcbX={leftRowX}
         pcbY={yOffset - i * pitch}
         layer="top"
@@ -70,16 +88,14 @@ const XiaoRP2040Footprint = () => {
   }
 
   // Right side pads (VBUS, GND3, V3_3, MOSI, MISO, SCK, RX)
-  const rightRowX = 8.25
-  const rightPins = 7
-
+  // 7 pins centered vertically
   for (let i = 0; i < rightPins; i++) {
     pads.push(
       <smtpad
         key={`right-${pinNumber}`}
         portHints={[`pin${pinNumber++}`]}
-        width={3}
-        height={2}
+        width={1.6}
+        height={1.6}
         pcbX={rightRowX}
         pcbY={yOffset - i * pitch}
         layer="top"
