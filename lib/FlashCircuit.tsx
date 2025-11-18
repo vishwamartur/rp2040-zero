@@ -1,4 +1,4 @@
-import { W25Q16JVUXIQ } from "../imports/W25Q16JVUXIQ"
+﻿import { W25Q16JVUXIQ } from "../imports/W25Q16JVUXIQ"
 
 export const FlashCircuit = () => (
   <group>
@@ -8,6 +8,7 @@ export const FlashCircuit = () => (
       footprint="0603"
       schOrientation="vertical"
       connections={{
+        pin1: "net.V3_3",  // Connect to power
         pin2: "net.GND",
       }}
     />
@@ -18,7 +19,7 @@ export const FlashCircuit = () => (
         DO: "net.QSPI_SD1",
         WP_N: "net.QSPI_SD2",
         GND: "net.GND",
-        VCC: "C3.1",
+        VCC: ["C3.1", "net.V3_3"],  // Connect to both cap and power net
         HOLD_N: "net.QSPI_SD3",
         CLK: "net.QSPI_CLK",
         DI: "net.QSPI_SD0",

@@ -1,4 +1,4 @@
-﻿import type { ChipProps } from "@tscircuit/props"
+import type { ChipProps } from "@tscircuit/props"
 
 // Create a Xiao-style footprint for the RP2040-Zero
 // Board dimensions: 21mm (length) x 17.5mm (width)
@@ -16,8 +16,9 @@ const XiaoRP2040Footprint = () => {
   const leftPins = 7
   const rightPins = 7
 
-  // Calculate pad positions with routing optimization
-  // Left/right pads positioned for optimal trace routing
+  // Calculate pad positions
+  // Left/right pads are positioned at ±7.62mm from center (15.24mm apart)
+  // This leaves ~1.13mm clearance on each side of the 17.5mm board
   const leftRowX = -7.62
   const rightRowX = 7.62
 
@@ -25,7 +26,7 @@ const XiaoRP2040Footprint = () => {
   const yOffset = ((leftPins - 1) / 2) * pitch  // = 7.62mm
 
   // Top castellated pads (SWDIO, SWCLK, RUN, GND1)
-  // Positioned for easy debug probe access
+  // Positioned near the top edge at Y = 8.5mm
   const topPads = [
     { x: -1.396, y: 8.5 },  // pin1: SWDIO
     { x: 1.144, y: 8.5 },   // pin2: SWCLK
@@ -48,7 +49,7 @@ const XiaoRP2040Footprint = () => {
   }
 
   // Bottom castellated pads (GND2, VIN)
-  // Positioned for power input routing
+  // Positioned near the bottom edge at Y = -8.5mm
   const bottomPads = [
     { x: 1.27, y: -8.5 },   // pin5: GND2
     { x: -1.27, y: -8.5 },  // pin6: VIN
@@ -59,8 +60,8 @@ const XiaoRP2040Footprint = () => {
       <smtpad
         key={`bottom-${pinNumber}`}
         portHints={[`pin${pinNumber++}`]}
-        width={1.2}  // Wider for power connections
-        height={2.4}
+        width={1.016}
+        height={2.032}
         pcbX={pad.x}
         pcbY={pad.y}
         layer="top"
@@ -70,7 +71,7 @@ const XiaoRP2040Footprint = () => {
   }
 
   // Left side pads (A0-A3, SDA, SCL, TX)
-  // Optimized spacing for trace routing
+  // 7 pins centered vertically
   for (let i = 0; i < leftPins; i++) {
     pads.push(
       <smtpad
@@ -87,16 +88,14 @@ const XiaoRP2040Footprint = () => {
   }
 
   // Right side pads (VBUS, GND3, V3_3, MOSI, MISO, SCK, RX)
-  // Optimized for power and high-speed signals
+  // 7 pins centered vertically
   for (let i = 0; i < rightPins; i++) {
-    const isPower = i < 3  // First 3 pins are power
-    
     pads.push(
       <smtpad
         key={`right-${pinNumber}`}
         portHints={[`pin${pinNumber++}`]}
-        width={isPower ? 1.8 : 1.6}  // Wider power pads
-        height={isPower ? 1.8 : 1.6}
+        width={1.6}
+        height={1.6}
         pcbX={rightRowX}
         pcbY={yOffset - i * pitch}
         layer="top"
@@ -108,59 +107,49 @@ const XiaoRP2040Footprint = () => {
   return <footprint>{pads}</footprint>
 }
 
-// Enhanced pin labels with routing priorities
+// XiaoBoard RP2040 pin labels from @tscircuit/common
 const RP2040PinLabels = {
-  pin1: "SWDIO",    // Debug - medium priority
-  pin2: "SWCLK",    // Debug - medium priority  
-  pin3: "RUN",      // Reset - high priority
-  pin4: "GND1",     // Power - critical
-  pin5: "GND2",     // Power - critical
-  pin6: "VIN",      // Power - critical
-  pin7: "A0",       // Analog - low priority
-  pin8: "A1",       // Analog - low priority
-  pin9: "A2",       // Analog - low priority
-  pin10: "A3",      // Analog - low priority
-  pin11: "SDA",     // I2C - medium priority
-  pin12: "SCL",     // I2C - medium priority
-  pin13: "TX",      // UART - medium priority
-  pin14: "VBUS",    // Power - critical
-  pin15: "GND3",    // Power - critical
-  pin16: "V3_3",    // Power - critical
-  pin17: "MOSI",    // SPI - high priority
-  pin18: "MISO",    // SPI - high priority
-  pin19: "SCK",     // SPI - high priority
-  pin20: "RX",      // UART - medium priority
+  pin1: "SWDIO",
+  pin2: "SWCLK",
+  pin3: "RUN",
+  pin4: "GND1",
+  pin5: "GND2",
+  pin6: "VIN",
+  pin7: "A0",
+  pin8: "A1",
+  pin9: "A2",
+  pin10: "A3",
+  pin11: "SDA",
+  pin12: "SCL",
+  pin13: "TX",
+  pin14: "VBUS",
+  pin15: "GND3",
+  pin16: "V3_3",
+  pin17: "MOSI",
+  pin18: "MISO",
+  pin19: "SCK",
+  pin20: "RX",
 }
 
-// Optimized pin arrangement for routing
 const rp2040PinArrangement = {
   leftSide: {
     direction: "top-to-bottom" as const,
-    pins: [
-      "A0",    // Analog pins grouped
-      "A1", 
-      "A2", 
-      "A3",
-      "SDA",   // I2C pair grouped  
-      "SCL",
-      "TX",    // UART TX
-      "VIN"    // Power at edge
-    ]
+    pins: ["SWDIO", "RUN", "A0", "A1", "A2", "A3", "SDA", "SCL", "TX", "VIN"],
   },
   rightSide: {
     direction: "top-to-bottom" as const,
     pins: [
-      "VBUS",   // Power group
-      "V3_3",
-      "GND3", 
-      "MOSI",   // SPI group
-      "MISO",
-      "SCK",
-      "RX",     // UART RX
-      "SWDIO",  // Debug group
       "SWCLK",
-      "RUN"
-    ]
+      "RX",
+      "SCK",
+      "MISO",
+      "MOSI",
+      "V3_3",
+      "GND1",
+      "GND2",
+      "GND3",
+      "VBUS",
+    ],
   },
 }
 
@@ -169,24 +158,40 @@ export const XiaoBoardBreakout = () => (
     name="P1"
     footprint={<XiaoRP2040Footprint />}
     pinLabels={RP2040PinLabels}
-    schWidth={1.8}  // Wider for better routing visualization
-    schHeight={2.5}
+    schWidth={1.5}
     schPinArrangement={rp2040PinArrangement}
-    
+    schPinStyle={{
+      pin2: {
+        marginBottom: 0.2,
+      },
+      pin3: {
+        marginBottom: 0.3,
+      },
+      pin15: {
+        marginBottom: 0.2,
+      },
+      pin16: {
+        marginBottom: 0.2,
+      },
+      pin13: {
+        marginBottom: 0.3,
+      },
+    }}
     connections={{
       // Power connections
       VIN: "net.V5_5",
-      V3_3: "net.V3_3", 
+      V3_3: "net.V3_3",
       GND1: "net.GND",
       GND2: "net.GND",
       GND3: "net.GND",
       VBUS: "net.VSYS",
 
       // GPIO connections mapped to RP2040-Zero pinout
-      A0: "net.GPIO26",   // GPIO26/ADC0
-      A1: "net.GPIO27",   // GPIO27/ADC1
-      A2: "net.GPIO28",   // GPIO28/ADC2
-      A3: "net.GPIO29",   // GPIO29/ADC3
+      // Based on Waveshare RP2040-Zero schematic
+      A0: "net.GPIO26",  // GPIO26/ADC0
+      A1: "net.GPIO27",  // GPIO27/ADC1
+      A2: "net.GPIO28",  // GPIO28/ADC2
+      A3: "net.GPIO29",  // GPIO29/ADC3
 
       SDA: "net.GPIO6",   // GPIO6 (I2C1 SDA)
       SCL: "net.GPIO7",   // GPIO7 (I2C1 SCL)
@@ -194,7 +199,7 @@ export const XiaoBoardBreakout = () => (
       RX: "net.GPIO1",    // GPIO1 (UART0 RX)
 
       MOSI: "net.GPIO3",  // GPIO3 (SPI0 MOSI)
-      MISO: "net.GPIO4",  // GPIO4 (SPI0 MISO) 
+      MISO: "net.GPIO4",  // GPIO4 (SPI0 MISO)
       SCK: "net.GPIO2",   // GPIO2 (SPI0 SCK)
 
       // Debug connections
@@ -204,3 +209,4 @@ export const XiaoBoardBreakout = () => (
     }}
   />
 )
+

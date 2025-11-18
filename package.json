@@ -20,6 +20,8 @@
     "tscircuit": "^0.0.614"
   },
   "dependencies": {
-    "@tscircuit/common": "^0.0.4"
+    "@tscircuit/cli": "^0.1.501",
+    "@tscircuit/common": "^0.0.4",
+    "kicad-component-converter": "^0.1.34"
   }
 }

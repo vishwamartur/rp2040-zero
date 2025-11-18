@@ -1,4 +1,4 @@
-﻿import { RP2040 } from "../imports/RP2040"
+import { RP2040 } from "../imports/RP2040"
 
 export const RP2040Circuit = () => (
   <group pcbPack pcbGap={2}>
@@ -62,8 +62,7 @@ export const RP2040Circuit = () => (
         VREG_VOUT: "net.V1_1",
       }}
     />
-    
-    {/* Decoupling Capacitors for IOVDD - simplified placement */}
+    {/* Decoupling Capacitors for IOVDD */}
     {["C12", "C14", "C8", "C13", "C15", "C19"].map((cName) => (
       <capacitor
         key={cName}
@@ -76,8 +75,6 @@ export const RP2040Circuit = () => (
         }}
       />
     ))}
-    
-    {/* DVDD decoupling */}
     <capacitor
       name="C18"
       capacitance="100nF"
@@ -96,8 +93,6 @@ export const RP2040Circuit = () => (
         pin2: "net.GND",
       }}
     />
-    
-    {/* Core voltage caps */}
     <capacitor
       name="C9"
       capacitance="2.2uF"
