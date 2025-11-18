@@ -3,24 +3,36 @@ import type { GroupProps } from "@tscircuit/props"
 
 export const VoltageRegulator = (groupProps: GroupProps) => (
   <group {...groupProps}>
-    {/* Input capacitors - simplified placement */}
+    {/* Input capacitors */}
     <capacitor
       name="C6"
       schOrientation="vertical"
       footprint="0402"
       capacitance="2.2uF"
+      connections={{
+        pin1: "net.VSYS",
+        pin2: "net.GND",
+      }}
     />
     <capacitor
       name="C1" 
       schOrientation="vertical"
       footprint="0402"
       capacitance="2.2uF"
+      connections={{
+        pin1: "net.VSYS",
+        pin2: "net.GND",
+      }}
     />
     <capacitor
       name="C2"
       schOrientation="vertical" 
       footprint="0402"
       capacitance="2.2uF"
+      connections={{
+        pin1: "net.VSYS",
+        pin2: "net.GND",
+      }}
     />
     
     {/* Output capacitor */}
@@ -29,21 +41,22 @@ export const VoltageRegulator = (groupProps: GroupProps) => (
       schOrientation="vertical"
       footprint="0402"
       capacitance="1uF"
-    />
-    
-    {/* Voltage regulator */}
-    <RT9013_33GB
-      name="U1"
       connections={{
-        VIN: ["C6.1", "C1.1", "C2.1", "net.VSYS"],
-        GND: ["C6.2", "C1.2", "C2.2", "net.GND"], 
-        EN: "U1.VIN", // Enable tied to VIN for always-on
-        VOUT: ["net.V3_3", "C5.1"],
+        pin1: "net.V3_3",
+        pin2: "net.GND",
       }}
     />
     
-    {/* Simple ground connection for output cap */}
-    <trace from="C5.2" to="net.GND" />
+    {/* Voltage regulator - simplified connections */}
+    <RT9013_33GB
+      name="U1"
+      connections={{
+        VIN: "net.VSYS",
+        GND: "net.GND", 
+        EN: "net.VSYS", // Enable tied to VIN for always-on
+        VOUT: "net.V3_3",
+      }}
+    />
     
   </group>
 )
